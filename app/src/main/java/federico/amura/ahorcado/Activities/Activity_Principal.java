@@ -1,12 +1,6 @@
 package federico.amura.ahorcado.Activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
@@ -19,8 +13,9 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
-import java.util.Random;
+import com.bumptech.glide.Glide;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,7 +32,7 @@ public class Activity_Principal extends AppCompatActivity {
     NavigationView mDrawer;
 
     @Bind(R.id.fondo)
-    View mFondo;
+    ImageView mFondo;
 
     @Bind(R.id.appBar)
     AppBarLayout mAppBar;
@@ -47,8 +42,6 @@ public class Activity_Principal extends AppCompatActivity {
 
     @Bind(R.id.btnIniciar)
     CardView mButton_Iniciar;
-
-    int[] colores;
 
     @Override
     protected void onCreate(final Bundle state) {
@@ -60,17 +53,12 @@ public class Activity_Principal extends AppCompatActivity {
         initDrawer();
         initToolbar();
 
-        colores = getResources().getIntArray(R.array.colores);
-
-        int cDarker = darker(((ColorDrawable) mFondo.getBackground()).getColor(), 0.6f);
-        mAppBar.setBackgroundColor(cDarker);
-        mButton_Iniciar.setCardBackgroundColor(cDarker);
+        Glide.with(this).load(R.drawable.pizarron).crossFade().centerCrop().into(mFondo);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 iniciarAnimBoton();
-                iniciarAnimFondo();
             }
         }, 500);
 
@@ -118,56 +106,6 @@ public class Activity_Principal extends AppCompatActivity {
                 });
             }
         });
-    }
-
-    private void iniciarAnimFondo() {
-        int colorAnterior = ((ColorDrawable) mFondo.getBackground()).getColor();
-        int colorNuevo = getColor();
-        ValueAnimator valueAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), colorAnterior, colorNuevo);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int c = (int) animation.getAnimatedValue();
-                mFondo.setBackgroundColor(c);
-
-                int cDarker = darker(c, 0.6f);
-
-                mAppBar.setBackgroundColor(cDarker);
-                mButton_Iniciar.setCardBackgroundColor(cDarker);
-            }
-        });
-        valueAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                iniciarAnimFondo();
-            }
-        });
-        valueAnimator.setDuration(1000);
-        valueAnimator.start();
-    }
-
-    private int getColor() {
-        int index = randInt(0, colores.length - 1);
-        return colores[index];
-    }
-
-    public static int darker(int color, float factor) {
-        int a = Color.alpha(color);
-        int r = Color.red(color);
-        int g = Color.green(color);
-        int b = Color.blue(color);
-
-        return Color.argb(a,
-                Math.max((int) (r * factor), 0),
-                Math.max((int) (g * factor), 0),
-                Math.max((int) (b * factor), 0));
-    }
-
-    Random rand = new Random();
-
-    public int randInt(int min, int max) {
-        return rand.nextInt((max - min) + 1) + min;
     }
 
     @OnClick(R.id.btnIniciar)

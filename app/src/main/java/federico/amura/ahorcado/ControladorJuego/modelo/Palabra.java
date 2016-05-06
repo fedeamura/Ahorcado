@@ -3,6 +3,9 @@ package federico.amura.ahorcado.ControladorJuego.modelo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 /**
  * Creado por Federico Amura el 27/04/16.
  */
@@ -55,6 +58,23 @@ public class Palabra implements Parcelable {
             }
         }
         return true;
+    }
+
+    public char getLetraSinAdivinar() {
+        ArrayList<Character> sinAdivinar = new ArrayList<>();
+        for (int i = 0; i < palabra.length(); i++) {
+            if (letras_completadas[i] == '\0') {
+                sinAdivinar.add(palabra.charAt(i));
+            }
+        }
+
+        return sinAdivinar.get(randInt(0, sinAdivinar.size() - 1));
+    }
+
+    Random random = new Random();
+
+    private int randInt(int min, int max) {
+        return random.nextInt((max - min) + 1) + min;
     }
 
     @Override

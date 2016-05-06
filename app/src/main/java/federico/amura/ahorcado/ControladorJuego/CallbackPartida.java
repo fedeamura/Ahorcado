@@ -13,6 +13,8 @@ public interface CallbackPartida {
     //Eventos durante el juego
     void actualizarErrores();
 
+    void actualizarMonedas();
+
     void actualizarPalabra();
 
     void actualizarTeclado();

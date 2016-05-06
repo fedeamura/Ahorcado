@@ -23,6 +23,9 @@ public class Partida implements Parcelable {
     Errores errores;
 
     @NonNull
+    Monedas monedas;
+
+    @NonNull
     ArrayList<Character> letras_intentadas;
 
     @NonNull
@@ -35,10 +38,11 @@ public class Partida implements Parcelable {
     @NonNull
     Estado estado;
 
-    public Partida(@NonNull char[] alfabeto, @NonNull Palabra palabra, @NonNull Errores errores, @NonNull CallbackPartida callbackPartida) {
+    public Partida(@NonNull char[] alfabeto, @NonNull Palabra palabra, @NonNull Errores errores, @NonNull Monedas monedas, @NonNull CallbackPartida callbackPartida) {
         this.alfabeto = alfabeto;
         this.palabra = palabra;
         this.errores = errores;
+        this.monedas = monedas;
         this.letras_intentadas = new ArrayList<>();
         this.estado = Estado.esperando;
         this.callbackPartida = callbackPartida;
@@ -63,6 +67,32 @@ public class Partida implements Parcelable {
         }
 
         this.callbackPartida.onJuegoResumido();
+    }
+
+    public char adivinarLetra() {
+        if (this.estado != Estado.jugando) {
+            throw new RuntimeException("Intentando adivinar una eltra con una partida en estado " + this.estado.name());
+        }
+
+        if (!isMonedasDisponibles()) {
+            throw new RuntimeException("Intentando adivinar una letra sin monedas");
+        }
+
+        monedas.usarMoneda();
+        callbackPartida.actualizarMonedas();
+        return palabra.getLetraSinAdivinar();
+    }
+
+    public boolean isMonedasDisponibles() {
+        return monedas.isMonedasDisponibles();
+    }
+
+    public int getMonedasDisponibles() {
+        return monedas.getMonedasMaximas() - monedas.getMonedasUsadas();
+    }
+
+    public int getMonedasTotales() {
+        return monedas.getMonedasMaximas();
     }
 
     public void insertarLetra(char c) {
@@ -142,9 +172,19 @@ public class Partida implements Parcelable {
 
     @NonNull
     public Estado getEstado() {
-        if (palabra.isCompletada()) return Estado.ganado;
-        if (errores.isPerdio()) return Estado.perdido;
-        return Estado.jugando;
+        actualizarEstado();
+        return estado;
+    }
+
+    private void actualizarEstado() {
+        if (errores.isPerdio()) {
+            this.estado = Estado.perdido;
+            return;
+        }
+
+        if (palabra.isCompletada()) {
+            this.estado = Estado.ganado;
+        }
     }
 
         /* Parcel */

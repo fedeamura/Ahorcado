@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.Set;
 
 import federico.amura.ahorcado.ControladorJuego.modelo.Errores;
+import federico.amura.ahorcado.ControladorJuego.modelo.Monedas;
 import federico.amura.ahorcado.ControladorJuego.modelo.Palabra;
 import federico.amura.ahorcado.ControladorJuego.modelo.Partida;
 import federico.amura.ahorcado.Preferencias_PalabrasAgregadas;
@@ -29,6 +30,7 @@ public class ControladorJuego {
     }
 
     private int erroresMaximos = 7;
+    private int monedasMaximas = 3;
 
     private ArrayList<String> palabras;
 
@@ -58,8 +60,9 @@ public class ControladorJuego {
         char[] alfabeto = "abcdefghijklmnñopqrstuvwxyz".toCharArray();
         Palabra palabra = generarNuevaPalabra();
         Errores errores = new Errores(erroresMaximos);
+        Monedas monedas = new Monedas(monedasMaximas);
 
-        return new Partida(alfabeto, palabra, errores, callbackPartida);
+        return new Partida(alfabeto, palabra, errores, monedas, callbackPartida);
     }
 
     private Palabra generarNuevaPalabra() {

@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import federico.amura.ahorcado.ControladorJuego.CallbackPartida;
 import federico.amura.ahorcado.ControladorJuego.ControladorJuego;
 import federico.amura.ahorcado.ControladorJuego.modelo.Palabra;
@@ -43,6 +44,9 @@ public class Activity_Ahorcado extends AppCompatActivity implements CallbackPart
 
     @Bind(R.id.contenedorLetras)
     ViewGroup mContenedor_Letras;
+
+    @Bind(R.id.btnAdivinarLetra)
+    Button mButton_AdivinarLetra;
 
     @Bind(R.id.contenedorTeclado)
     ViewGroup mContenedor_Teclado;
@@ -145,6 +149,14 @@ public class Activity_Ahorcado extends AppCompatActivity implements CallbackPart
         partida.insertarLetra(letra);
     }
 
+    @OnClick(R.id.btnAdivinarLetra)
+    public void onBoton_AdivinarClick() {
+        if (partida.isMonedasDisponibles()) {
+            char letra = partida.adivinarLetra();
+            onClickLetra(letra);
+        }
+    }
+
     /* State */
 
     @Override
@@ -161,6 +173,7 @@ public class Activity_Ahorcado extends AppCompatActivity implements CallbackPart
         inicializarTeclado(partida.getAlfabeto());
 
         actualizarErrores();
+        actualizarMonedas();
 
         animarInicio();
     }
@@ -171,6 +184,7 @@ public class Activity_Ahorcado extends AppCompatActivity implements CallbackPart
         inicializarTeclado(partida.getAlfabeto());
 
         actualizarErrores();
+        actualizarMonedas();
         actualizarPalabra();
         actualizarTeclado();
 
@@ -198,6 +212,13 @@ public class Activity_Ahorcado extends AppCompatActivity implements CallbackPart
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(mImageView_Muñeco);
+    }
+
+    @Override
+    public void actualizarMonedas(){
+        int monedasDisponibles = partida.getMonedasDisponibles();
+        int monedasTotales = partida.getMonedasTotales();
+        mButton_AdivinarLetra.setText("Adivinar letra (" + monedasDisponibles + "/" + monedasTotales + ")");
     }
 
     @Override
@@ -425,6 +446,9 @@ public class Activity_Ahorcado extends AppCompatActivity implements CallbackPart
             ViewCompat.setScaleY(view, 0);
         }
 
+        //Boton
+        ViewCompat.setAlpha(mButton_AdivinarLetra, 0);
+
         //Teclado
         ViewCompat.setAlpha(mContenedor_Teclado, 0);
     }
@@ -442,8 +466,12 @@ public class Activity_Ahorcado extends AppCompatActivity implements CallbackPart
             ViewCompat.animate(view).alpha(1).scaleX(1).scaleY(1).setStartDelay(delayLetras + (i * 100));
         }
 
+        //Boton Adivinar
+        int delayBoton = delayLetras + ((mContenedor_Letras.getChildCount()) * 100) + 300;
+        ViewCompat.animate(mButton_AdivinarLetra).alpha(1).setStartDelay(delayBoton);
+
         //Teclado
-        int delayTeclado = delayLetras + ((mContenedor_Letras.getChildCount()) * 100);
+        int delayTeclado = delayBoton + 300;
         ViewCompat.animate(mContenedor_Teclado).alpha(1).setStartDelay(delayTeclado);
     }
 
@@ -456,6 +484,9 @@ public class Activity_Ahorcado extends AppCompatActivity implements CallbackPart
             View view = mContenedor_Letras.getChildAt(i);
             ViewCompat.animate(view).alpha(0).scaleX(0).scaleY(0).setStartDelay(0);
         }
+
+        //Boton
+        ViewCompat.animate(mButton_AdivinarLetra).alpha(0).setStartDelay(0);
 
         //Teclado
         ViewCompat.animate(mContenedor_Teclado).alpha(0).setStartDelay(0);
