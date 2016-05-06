@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Ahorcado</string>
+
+    <string-array name="palabras">
+        <item>Ingenieria</item>
+        <item>Sistemas</item>
+        <item>Diseño</item>
+        <item>Arquitectura</item>
+        <item>Testing</item>
+        <item>Desarrollador</item>
+        <item>Java</item>
+        <item>Programacion</item>
+        <item>Software</item>
+        <item>Hardware</item>
+    </string-array>
+</resources>
